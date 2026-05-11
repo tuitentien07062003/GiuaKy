@@ -128,19 +128,37 @@ export const resetPassword = async (req, res) => {
 export const getProfile = async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
-    if (!token) return res.status(401).json({ success: false, message: 'Thiếu token.' });
 
+    if (!token) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Không tìm thấy mã xác thực (Token).' 
+      });
+    }
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError) throw authError;
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
+    if (authError) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Phiên đăng nhập hết hạn hoặc token không hợp lệ.' 
+      });
+    }
 
-    return res.json({ success: true, user, profile });
+    return res.json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        email_confirmed_at: user.email_confirmed_at,
+        last_sign_in_at: user.last_sign_in_at,
+        metadata: user.user_metadata 
+      }
+    });
+
   } catch (err) {
-    return res.status(401).json({ success: false, message: err.message });
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi hệ thống: ' + err.message
+    });
   }
 };

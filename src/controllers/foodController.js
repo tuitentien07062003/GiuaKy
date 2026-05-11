@@ -47,11 +47,11 @@ export const getMenuItemById = async (req, res) => {
             .single();
 
         if (error) {
-            console.error("Supabase Error:", error); // Dòng này cực kỳ quan trọng để debug
+            console.error("Supabase Error:", error);
             return res.status(404).json({ 
                 success: false, 
                 message: error.message,
-                details: error.details // Xem thêm chi tiết lỗi
+                details: error.details
             });
         }
 

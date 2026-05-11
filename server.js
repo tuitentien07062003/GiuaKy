@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './src/routes/authRoutes.js';
+import foodRoutes from './src/routes/foodRoutes.js';
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/restaurant', authRoutes);
+app.use('/restaurant', foodRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
